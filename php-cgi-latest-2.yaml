@@ -18,16 +18,12 @@ requests:
         Host: {{Hostname}}
         Content-Type: application/x-www-form-urlencoded
 
-        <?php phpinfo(); ?>
+        <?php echo md5("{{string}}");?>
 
     matchers-condition: and
     matchers:
       - type: word
         part: body
         words:
-          - "phpinfo()"
-        condition: and
-
-      - type: status
-        status:
-          - 200
+          - '{{md5(string)}}'
+# digest: 4a0a00473045022022ce5c4f17e4d8fc33d21bc60cf909dfcbb5c85217e1c7fa201caac4702e7d140221008912f28136b2b7554af51f8c82f896a076d16087aa6b5bff6027c4075a4937da:922c64590222798bb761d5b6d8e72950
