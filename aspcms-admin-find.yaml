@@ -1,0 +1,33 @@
+id: aspcms-admin-detection
+info:
+  name: AspCMS Admin Panel Detection
+  author: security_researcher
+  severity: info
+  description: Detects AspCMS admin login pages and installations
+  tags: tech,aspcms,panel
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/admin_aspcms/login.asp"
+      - "{{BaseURL}}/admin_aspcms"
+      - "{{BaseURL}}/admin"
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      
+      - type: regex
+        regex:
+          - "(?i)Powered by AspCms"
+        part: body
+
+    extractors:
+      - type: regex
+        name: version
+        regex:
+          - "(?i)Powered by AspCms ([0-9.]+)"
+        part: body
+        group: 1
