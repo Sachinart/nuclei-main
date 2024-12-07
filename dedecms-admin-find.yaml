@@ -1,0 +1,34 @@
+id: admin-login-page-detect
+info:
+  name: Admin Login Page Detection
+  author: ChiragArtani
+  severity: info
+  description: Checks for common admin login page paths
+  tags: admin,login,panel
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/dede/login.php"
+      - "{{BaseURL}}/admin/login.php"
+      - "{{BaseURL}}/web_admin/login.php"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: regex
+        regex:
+          - "(?i)newdedecms"
+        part: body
+
+    extractors:
+      - type: regex
+        name: admin_page
+        regex:
+          - "(?i)newdedecms"
+        part: body
+
+    stop-at-first-match: true
