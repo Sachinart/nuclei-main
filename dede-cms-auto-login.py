@@ -10,6 +10,8 @@ from datetime import datetime
 import os
 import gc
 
+# install - sudo apt-get install tesseract-ocr and pip install pytesseract
+
 #Exploit By Chirag Artani dedecms auto login captcha bypass
 # Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
