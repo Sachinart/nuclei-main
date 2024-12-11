@@ -1,24 +1,28 @@
 id: url-to-ip-resolver
 info:
-  name: URL to IP Resolver
+  name: Fast URL to IP Resolver
   author: chiragartani
   severity: info
-  description: Template to resolve URLs to their corresponding IP addresses
-  tags: recon,network
+  description: High-performance template to resolve URLs to IPs using DNS
+  tags: dns,recon,network
 
-requests:
-  - method: GET
-    path:
-      - "{{BaseURL}}"
-
+dns:
+  - name: "{{FQDN}}"
+    type: A
+    class: inet
+    retries: 1
+    recursion: true
+    
     matchers:
-      - type: dsl
-        dsl:
-          - "true"
+      - type: word
+        words:
+          - "IN\tA"
+        condition: or
+        fast-match: true
 
     extractors:
       - type: regex
         name: ip
-        part: response
         regex:
-          - "(?:[0-9]{1,3}\\.){3}[0-9]{1,3}"
+          - "IN\tA\t([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})"
+        group: 1
