@@ -1,0 +1,28 @@
+id: admin-login-southidc-detect
+info:
+  name: Admin Login Page Detection - Southidc
+  author: security_researcher
+  severity: info
+  description: Detects admin login pages using Southidc framework
+  tags: panel,admin,login
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/admin/Login.asp"
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: regex
+        regex:
+          - "(?i)Southidc"
+        part: body
+
+    extractors:
+      - type: regex
+        name: version
+        regex:
+          - "(?i)Southidc.*?([0-9.]+)"
+        part: body
