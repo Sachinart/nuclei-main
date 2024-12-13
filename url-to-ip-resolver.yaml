@@ -1,24 +1,22 @@
 id: url-to-ip-resolver
 info:
-  name: Fast URL to IP Resolver
+  name: URL to IP Resolver
   author: chiragartani
   severity: info
-  description: High-performance template to resolve URLs to IPs using DNS
+  description: Template to resolve URLs to their corresponding IP addresses using DNS
   tags: dns,recon,network
 
 dns:
   - name: "{{FQDN}}"
     type: A
     class: inet
-    retries: 1
     recursion: true
+    retries: 3
     
     matchers:
       - type: word
         words:
           - "IN\tA"
-        condition: or
-        fast-match: true
 
     extractors:
       - type: regex
