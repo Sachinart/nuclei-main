@@ -1,0 +1,74 @@
+id: ueditor-file-upload
+info:
+  name: UEditor - Arbitrary File Upload
+  author: princechaddha
+  severity: high
+  description: UEditor contains an arbitrary file upload vulnerability. An attacker can upload arbitrary files to the server, which in turn can be used to make the application execute file content as code, As a result, an attacker can possibly obtain sensitive information, modify data, and/or execute unauthorized operations.
+  reference:
+    - https://zhuanlan.zhihu.com/p/85265552
+    - https://www.freebuf.com/vuls/181814.html
+  classification:
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H
+    cvss-score: 8.8
+    cwe-id: CWE-434
+  metadata:
+    max-request: 1
+  tags: ueditor,fileupload,intrusive
+
+http:
+  - method: GET
+    path:
+      # Original paths
+      - "{{BaseURL}}/content/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/themes/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/vendor/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/plugins/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/js/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/lib/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/resources/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/static/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/assets/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/public/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/admin/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/manage/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # CMS-specific paths
+      - "{{BaseURL}}/cms/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/wcm/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/dashboard/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Framework-specific paths
+      - "{{BaseURL}}/laravel/public/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/web/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/webapp/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Common application directories
+      - "{{BaseURL}}/backend/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/frontend/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/editor/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/common/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/include/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Third-party integration paths
+      - "{{BaseURL}}/third-party/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/externals/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/components/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Media/Upload related paths
+      - "{{BaseURL}}/upload/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/media/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Version-specific paths
+      - "{{BaseURL}}/ueditor1.4.3/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor1.4/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor1.3/net/controller.ashx?action=catchimage&encode=utf-8"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      - type: word
+        words:
+          - "没有指定抓取源"
+        part: body
