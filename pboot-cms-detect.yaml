@@ -1,0 +1,42 @@
+id: pbootcms-detect
+
+info:
+  name: PbootCMS Detection
+  author: ChiragArtani
+  severity: info
+  description: Detects PbootCMS installations through response content and headers
+  tags: tech,pbootcms
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "pbootcms"
+        condition: or
+        case-insensitive: true
+
+      - type: regex
+        part: header
+        regex:
+          - "(?i)X-Powered-By: PbootCMS"
+          - "(?i)PbootSystem"
+        condition: or
+
+    extractors:
+      - type: regex
+        name: version
+        part: header
+        regex:
+          - "PbootCMS/?([0-9.]+)?"
+
+      - type: regex
+        name: version_body
+        part: body
+        regex:
+          - "PbootCMS ?v?([0-9.]+)"
