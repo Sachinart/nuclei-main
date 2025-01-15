@@ -1,0 +1,64 @@
+id: likeshop-detection
+info:
+  name: Likeshop E-commerce Platform Detection
+  author: chiragartani
+  severity: info
+  description: Detects Likeshop installations using multiple methods including favicon hash, paths, and response patterns
+  tags: tech,likeshop,fingerprint
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/favicon.ico"
+      - "{{BaseURL}}/mobile/assets/"
+      - "{{BaseURL}}/admin/account/login.html"
+    
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: favicon-hash
+        condition: or
+        dsl:
+          - "status_code==200 && sha256(body)==\"50ee6523a4cba10377554c53f88bcd8b53cb5d11a03439f04f73aff55e982e86\""
+          - "status_code==200 && sha256(body)==\"ecc937e61b20b08256dce460ef0187314091103338f195d61591628859f7ac3c\""
+
+      - type: word
+        name: file-paths
+        words:
+          - "/mobile/assets/uni."
+          - "likeshop/server"
+          - "think_page_trace"
+        condition: or
+        part: body
+
+      - type: word
+        name: tech-indicators
+        words:
+          - "TopThink"
+          - "LikeShop"
+          - "上门预约"
+        condition: or
+        part: body
+
+      - type: regex
+        name: structure-patterns
+        regex:
+          - "vendor/topthink/framework"
+          - "vendor/topthink/think-template"
+        condition: or
+        part: body
+
+      - type: dsl
+        name: response-analysis
+        condition: and
+        dsl:
+          - "status_code==200"
+          - "contains(body, 'uni.') && contains(body, 'mobile/assets/')"
+
+    extractors:
+      - type: regex
+        name: version
+        regex:
+          - 'version:"([0-9.]+)"'
+        group: 1
