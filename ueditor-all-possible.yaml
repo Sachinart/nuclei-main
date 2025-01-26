@@ -63,6 +63,47 @@ http:
       - "{{BaseURL}}/ueditor1.4/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/ueditor1.3/net/controller.ashx?action=catchimage&encode=utf-8"
 
+      # Additional CMS Platforms
+      - "{{BaseURL}}/wp-content/plugins/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/drupal/modules/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/joomla/plugins/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/magento/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+
+      # Cloud Platform Paths
+      - "{{BaseURL}}/cloud/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/platform/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Application Specific
+      - "{{BaseURL}}/blog/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/forum/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/bbs/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/portal/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+
+      # Development Environments
+      - "{{BaseURL}}/dev/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/test/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/stage/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Additional Framework Paths
+      - "{{BaseURL}}/symfony/public/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/django/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/flask/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/spring/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+
+      # Additional Version Paths
+      - "{{BaseURL}}/ueditor2.0/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor1.5/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Custom Implementation Paths
+      - "{{BaseURL}}/custom/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/api/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/service/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+
+      # Alternative Language Implementations
+      - "{{BaseURL}}/php/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/java/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/python/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+
     matchers-condition: and
     matchers:
       - type: status
