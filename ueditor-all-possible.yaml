@@ -29,7 +29,9 @@ http:
       - "{{BaseURL}}/static/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/assets/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/public/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/think/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/admin/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/config/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/manage/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       
       # CMS-specific paths
@@ -101,6 +103,8 @@ http:
 
       # Alternative Language Implementations
       - "{{BaseURL}}/php/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/asp/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/aspx/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/java/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/python/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
 
