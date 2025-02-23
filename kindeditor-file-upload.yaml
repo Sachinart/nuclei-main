@@ -1,0 +1,66 @@
+id: kindeditor-file-upload-scanner
+info:
+  name: KindEditor File Upload Scanner
+  author: ChiragArtani
+  severity: high
+  description: Detects potential file upload vulnerabilities in KindEditor installations
+  tags: kindeditor,upload,rce
+
+requests:
+  - raw:
+      - |
+        POST {{BaseURL}}/{{path}} HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data; boundary=---------------------------boundary
+        Accept: */*
+        Connection: close
+
+        -----------------------------boundary
+        Content-Disposition: form-data; name="imgFile"; filename="test.txt"
+        Content-Type: text/plain
+
+        test content
+        -----------------------------boundary--
+
+    payloads:
+      path:
+        - "kindeditor/php/upload_json.php?dir=file"
+        - "kindeditor/asp/upload_json.asp?dir=file"
+        - "kindeditor/jsp/upload_json.jsp?dir=file"
+        - "public/kindeditor/php/upload_json.php?dir=file"
+        - "static/kindeditor/php/upload_json.php?dir=file"
+        - "assets/kindeditor/php/upload_json.php?dir=file"
+        - "js/kindeditor/php/upload_json.php?dir=file"
+        - "think/kindeditor/php/upload_json.php?dir=file"
+        - "thinkphp/kindeditor/php/upload_json.php?dir=file"
+        - "public/vendor/kindeditor/php/upload_json.php?dir=file"
+        - "resources/vendor/kindeditor/php/upload_json.php?dir=file"
+        - "storage/kindeditor/php/upload_json.php?dir=file"
+        - "wp-content/plugins/kindeditor/php/upload_json.php?dir=file"
+        - "wp-content/themes/kindeditor/php/upload_json.php?dir=file"
+        - "sites/all/libraries/kindeditor/php/upload_json.php?dir=file"
+        - "vendor/kindeditor/php/upload_json.php?dir=file"
+        - "plugins/kindeditor/php/upload_json.php?dir=file"
+        - "admin/kindeditor/php/upload_json.php?dir=file"
+
+    attack: batteringram
+    stop-at-first-match: false
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '"error":0'
+          - '"url":'
+        condition: and
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: regex
+        part: body
+        regex:
+          - '"url":"([^"]+)"'
