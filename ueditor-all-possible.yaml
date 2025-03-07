@@ -1,7 +1,7 @@
 id: ueditor-file-upload
 info:
   name: UEditor - Arbitrary File Upload
-  author: princechaddha
+  author: ChiragArtani
   severity: high
   description: UEditor contains an arbitrary file upload vulnerability. An attacker can upload arbitrary files to the server, which in turn can be used to make the application execute file content as code, As a result, an attacker can possibly obtain sensitive information, modify data, and/or execute unauthorized operations.
   reference:
@@ -107,6 +107,101 @@ http:
       - "{{BaseURL}}/aspx/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/java/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
       - "{{BaseURL}}/python/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # NEW ADDITIONAL PATHS
+      
+      # Common subdirectories in web applications
+      - "{{BaseURL}}/app/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/apps/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/system/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/modules/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/core/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/panel/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/console/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/tinymce/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # E-commerce platforms
+      - "{{BaseURL}}/shop/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/store/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/mall/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/cart/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/product/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/catalog/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Corporate and institutional implementations
+      - "{{BaseURL}}/intranet/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/internal/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/extranet/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/portal/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/enterprise/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Admin panel variants
+      - "{{BaseURL}}/administrator/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/admincp/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/adminpanel/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/admins/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/cpanel/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/control/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/management/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # CDN and asset management paths
+      - "{{BaseURL}}/cdn/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/asset/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/dist/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/build/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Alternative controller implementations
+      - "{{BaseURL}}/ueditor/asp/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor/php/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor/jsp/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor/controllers/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Rich text editor common paths
+      - "{{BaseURL}}/wysiwyg/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/richtext/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/richtexteditor/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/texteditor/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Localized implementations
+      - "{{BaseURL}}/zh/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/zh-cn/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/cn/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/en/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Additional version formats
+      - "{{BaseURL}}/ueditor-1.4.3/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor-1.4/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor-latest/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor-min/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/ueditor_min/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Minified versions
+      - "{{BaseURL}}/ueditor.min/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/min/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Integration with other CMS platforms
+      - "{{BaseURL}}/typo3/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/opencart/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/prestashop/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/discuz/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/phpbb/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Node.js implementations
+      - "{{BaseURL}}/node/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/nodejs/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/node_modules/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      # Classic content management paths
+      - "{{BaseURL}}/content-management/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/page-editor/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/article/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/news/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+      
+      
+      # Abbreviated paths often used in configurations
+      - "{{BaseURL}}/ue/net/controller.ashx?action=catchimage&encode=utf-8"
+      - "{{BaseURL}}/baidu/ueditor/net/controller.ashx?action=catchimage&encode=utf-8"
+    
 
     matchers-condition: and
     matchers:
