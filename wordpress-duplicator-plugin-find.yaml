@@ -1,0 +1,51 @@
+id: duplicator-installer-exposure
+
+info:
+  name: Exposed Duplicator Installer
+  author: ChiragArtani
+  severity: high
+  description: Detects exposed Duplicator installer pages. The Duplicator installer should be removed after installation to prevent unauthorized access.
+  tags:
+    - wordpress
+    - exposure
+    - installer
+    - duplicator
+
+requests:
+  - method: GET
+    path:
+      - "{{BaseURL}}/dup-installer/main.installer.php"
+      - "{{BaseURL}}/wp/dup-installer/main.installer.php"
+      - "{{BaseURL}}/blog/dup-installer/main.installer.php"
+      - "{{BaseURL}}/dup-installer/"
+      - "{{BaseURL}}/installer.php"
+      - "{{BaseURL}}/wp-content/dup-installer/main.installer.php"
+      - "{{BaseURL}}/wordpress/dup-installer/main.installer.php"
+      - "{{BaseURL}}/wp-content/plugins/duplicator/installer.php"
+      - "{{BaseURL}}/wp-content/plugins/duplicator/dup-installer/"
+      - "{{BaseURL}}/site/dup-installer/main.installer.php"
+      - "{{BaseURL}}/cms/dup-installer/main.installer.php"
+      - "{{BaseURL}}/main/dup-installer/main.installer.php"
+      - "{{BaseURL}}/new/dup-installer/main.installer.php"
+      - "{{BaseURL}}/old/dup-installer/main.installer.php"
+      - "{{BaseURL}}/backup/dup-installer/main.installer.php"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<title>Duplicator</title>"
+        part: body
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: regex
+        name: title
+        part: body
+        regex:
+          - "<title>Duplicator</title>"
+
+    stop-at-first-match: true
