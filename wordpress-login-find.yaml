@@ -1,0 +1,187 @@
+id: wordpress-login
+
+info:
+  name: WordPress Login Panel - Detect
+  author: ChiragArtani
+  severity: info
+  description: WordPress login panel was detected.
+  classification:
+    cvss-metrics: CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N
+    cwe-id: CWE-200
+    cpe: cpe:2.3:a:wordpress:wordpress:*:*:*:*:*:*:*:*
+  metadata:
+    max-request: 1
+    vendor: wordpress
+    product: wordpress
+    shodan-query:
+      - http.component:"wordpress"
+      - cpe:"cpe:2.3:a:wordpress:wordpress"
+  tags: panel,wordpress
+
+http:
+  - method: GET
+    path:
+      # Core WordPress paths - most reliable
+      - "{{BaseURL}}/wp-login.php"
+      - "{{BaseURL}}/wp-admin/"
+      
+      # Common subdirectory installations
+      - "{{BaseURL}}/wordpress/wp-login.php"
+      - "{{BaseURL}}/wp/wp-login.php"
+      - "{{BaseURL}}/blog/wp-login.php"
+      - "{{BaseURL}}/cms/wp-login.php"
+      - "{{BaseURL}}/site/wp-login.php"
+      - "{{BaseURL}}/web/wp-login.php"
+      - "{{BaseURL}}/www/wp-login.php"
+      
+      # Version/State paths
+      - "{{BaseURL}}/new/wp-login.php"
+      - "{{BaseURL}}/old/wp-login.php"
+      - "{{BaseURL}}/backup/wp-login.php"
+      - "{{BaseURL}}/content/wp-login.php"
+      - "{{BaseURL}}/v1/wp-login.php"
+      - "{{BaseURL}}/v2/wp-login.php"
+      - "{{BaseURL}}/latest/wp-login.php"
+      - "{{BaseURL}}/current/wp-login.php"
+      
+      # Chinese-specific paths (most common)
+      - "{{BaseURL}}/cn/wp-login.php"
+      - "{{BaseURL}}/zh/wp-login.php"
+      - "{{BaseURL}}/zh-cn/wp-login.php"
+      - "{{BaseURL}}/zh-tw/wp-login.php"
+      - "{{BaseURL}}/chinese/wp-login.php"
+      - "{{BaseURL}}/admin/wp-login.php"
+      - "{{BaseURL}}/backend/wp-login.php"
+      
+      # Chinese directory names (pinyin)
+      - "{{BaseURL}}/guanli/wp-login.php"
+      - "{{BaseURL}}/houtai/wp-login.php"
+      - "{{BaseURL}}/denglu/wp-login.php"
+      - "{{BaseURL}}/wangzhan/wp-login.php"
+      - "{{BaseURL}}/boke/wp-login.php"
+      
+      # Chinese character paths
+      - "{{BaseURL}}/中文/wp-login.php"
+      - "{{BaseURL}}/管理/wp-login.php"
+      - "{{BaseURL}}/后台/wp-login.php"
+      - "{{BaseURL}}/登录/wp-login.php"
+      - "{{BaseURL}}/网站/wp-login.php"
+      - "{{BaseURL}}/博客/wp-login.php"
+      
+      # Year-based (common in Chinese sites)
+      - "{{BaseURL}}/2024/wp-login.php"
+      - "{{BaseURL}}/2023/wp-login.php"
+      - "{{BaseURL}}/2025/wp-login.php"
+      - "{{BaseURL}}/2022/wp-login.php"
+      
+      # Development/Testing paths
+      - "{{BaseURL}}/test/wp-login.php"
+      - "{{BaseURL}}/dev/wp-login.php"
+      - "{{BaseURL}}/demo/wp-login.php"
+      - "{{BaseURL}}/staging/wp-login.php"
+      - "{{BaseURL}}/beta/wp-login.php"
+      - "{{BaseURL}}/temp/wp-login.php"
+      
+      # Backup/Archive paths
+      - "{{BaseURL}}/bak/wp-login.php"
+      - "{{BaseURL}}/backup2024/wp-login.php"
+      - "{{BaseURL}}/archive/wp-login.php"
+      - "{{BaseURL}}/copy/wp-login.php"
+      - "{{BaseURL}}/mirror/wp-login.php"
+      
+      # Multi-site/Multi-domain paths
+      - "{{BaseURL}}/main/wp-login.php"
+      - "{{BaseURL}}/primary/wp-login.php"
+      - "{{BaseURL}}/master/wp-login.php"
+      - "{{BaseURL}}/home/wp-login.php"
+      - "{{BaseURL}}/index/wp-login.php"
+      
+      # Mobile paths
+      - "{{BaseURL}}/m/wp-login.php"
+      - "{{BaseURL}}/mobile/wp-login.php"
+      - "{{BaseURL}}/wap/wp-login.php"
+      
+      # Business/Organization paths
+      - "{{BaseURL}}/company/wp-login.php"
+      - "{{BaseURL}}/corp/wp-login.php"
+      - "{{BaseURL}}/business/wp-login.php"
+      - "{{BaseURL}}/org/wp-login.php"
+      
+      # Alternative admin paths
+      - "{{BaseURL}}/manage/wp-login.php"
+      - "{{BaseURL}}/control/wp-login.php"
+      - "{{BaseURL}}/dashboard/wp-login.php"
+      - "{{BaseURL}}/panel/wp-login.php"
+
+    matchers-condition: and
+    matchers:
+      # Status code must be 200
+      - type: status
+        status:
+          - 200
+
+      # MUST contain WordPress-specific login form structure
+      - type: regex
+        name: "wordpress-login-form"
+        regex:
+          - '<form[^>]+name="loginform"[^>]+id="loginform"[^>]+action="[^"]*wp-login\.php"[^>]*>'
+        condition: and
+
+      # MUST contain WordPress-specific input fields with exact names
+      - type: regex
+        name: "wordpress-login-fields"
+        regex:
+          - '<input[^>]+name="log"[^>]*>'
+          - '<input[^>]+name="pwd"[^>]*>'
+        condition: and
+
+      # MUST contain WordPress-specific submit button
+      - type: regex
+        name: "wordpress-submit"
+        regex:
+          - '<input[^>]+name="wp-submit"[^>]*>'
+        condition: and
+
+      # MUST contain WordPress-specific lost password link
+      - type: regex
+        name: "wordpress-lostpassword"
+        regex:
+          - 'wp-login\.php\?action=lostpassword'
+        condition: and
+
+      # MUST contain WordPress generator or assets
+      - type: word
+        name: "wordpress-identifier"
+        words:
+          - '/wp-admin/css/login'
+          - '/wp-includes/css/buttons'
+          - '/wp-admin/js/login'
+          - 'name="generator" content="WordPress'
+        condition: or
+
+      # MUST NOT contain other CMS indicators (prevents false positives)
+      - type: word
+        name: "not-other-cms"
+        words:
+          - "Joomla"
+          - "Drupal"
+          - "phpMyAdmin"
+          - "cPanel"
+          - "DirectAdmin"
+          - "Plesk"
+          - "OpenCart"
+          - "Magento"
+          - "PrestaShop"
+        condition: or
+        negative: true
+
+      # Additional WordPress-specific validation
+      - type: word
+        name: "wordpress-specific-elements"
+        words:
+          - 'class="login"'
+          - 'id="login"'
+          - 'wp-login-php'
+        condition: or
+
+# digest: 4a0a00473045022017b4771be563ac5265f17b3901f494efdd59bba71296d6705d726094f1b2d578022100d4241856418c5658e314313aed2f2d96a4cf78d69aed06dc7bf373993b3635e3:922c64590222798bb761d5b6d8e72950
