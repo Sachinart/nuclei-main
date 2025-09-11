@@ -1,0 +1,37 @@
+id: phpmyadmin-detection-fixed
+
+info:
+  name: phpMyAdmin Detection - Root Path Included
+  author: pentest
+  severity: info
+  description: Detects phpMyAdmin installations including root path
+  tags: phpmyadmin,exposure,discovery
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+      - "{{BaseURL}}/phpmyadmin/"
+      - "{{BaseURL}}/pma/"
+      - "{{BaseURL}}/admin/phpmyadmin/"
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        part: body
+        words:
+          - "phpMyAdmin"
+          - "Welcome to phpMyAdmin"
+        condition: or
+
+    extractors:
+      - type: regex
+        name: version
+        part: body
+        regex:
+          - 'phpMyAdmin ([0-9]+\.[0-9]+\.[0-9]+[^\s<]*)'
+        group: 1
