@@ -38,15 +38,15 @@ http:
       user:
         - root
         - mysql
-		    - wordpress
+		- wordpress
       password:
-	      - Admin123
-		    - admin
-		    - 123456
-		    - admin123
-		    - Qq123456
-		    - Avfr4bgt5
-		    - Aa123456
+	    - Admin123
+		- admin
+		- 123456
+		- admin123
+		- Qq123456
+		- Avfr4bgt5
+		- Aa123456
         - P@ssw0rd
         - root
         - mysql
