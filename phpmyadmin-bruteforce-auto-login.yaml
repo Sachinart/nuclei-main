@@ -38,15 +38,15 @@ http:
       user:
         - root
         - mysql
-		- wordpress
+        - wordpress
       password:
-	    - Admin123
-		- admin
-		- 123456
-		- admin123
-		- Qq123456
-		- Avfr4bgt5
-		- Aa123456
+        - Admin123
+        - admin
+        - 123456
+        - admin123
+        - Qq123456
+        - Avfr4bgt5
+        - Aa123456
         - P@ssw0rd
         - root
         - mysql
@@ -73,9 +73,9 @@ http:
         internal: true
         group: 2
         regex:
-          - "phpMyAdmin(_https)?=([0-9a-z]+)" # for HTTPS
-    stop-at-first-match: true
+          - "phpMyAdmin(_https)?=([0-9a-z]+)"
 
+    stop-at-first-match: true
     matchers-condition: and
     matchers:
       - type: dsl
@@ -84,4 +84,5 @@ http:
           - status_code_2 == 302
           - contains(header_2, 'index.php?collation_connection=utf8mb4_unicode_ci') || contains(header_2, '/index.php?route=/&route=%2F')
         condition: and
+
 # digest: 4b0a00483046022100d02c59dfe090e128568200bc929b6e51c6db84a5a2594cc440792096ad8402d3022100d2eeda885e43d9493f1d81ddc8ea77f7b6ced9abb4c3347bbf61f14ac2649858:922c64590222798bb761d5b6d8e72950
