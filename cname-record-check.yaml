@@ -1,0 +1,45 @@
+id: cname-finder
+
+info:
+  name: CNAME Record Finder
+  author: ChiragArtani
+  severity: info
+  description: Finds CNAME records and displays target
+  tags: dns,cname
+
+dns:
+  - name: "www.{{FQDN}}"
+    type: CNAME
+    class: inet
+    recursion: true
+
+    matchers:
+      - type: word
+        words:
+          - "IN\tCNAME"
+
+    extractors:
+      - type: regex
+        name: cname_record
+        part: answer
+        regex:
+          - "IN\tCNAME\t(.+)\\.$"
+        group: 1
+
+  - name: "{{FQDN}}"
+    type: CNAME
+    class: inet 
+    recursion: true
+
+    matchers:
+      - type: word
+        words:
+          - "IN\tCNAME"
+
+    extractors:
+      - type: regex
+        name: root_cname_record
+        part: answer
+        regex:
+          - "IN\tCNAME\t(.+)\\.$"
+        group: 1
